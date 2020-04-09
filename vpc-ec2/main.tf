@@ -4,7 +4,7 @@ provider "aws" {
   region     = "${var.aws_region}"
 }
 
-# Create VPC
+#Create VPC
 resource "aws_vpc" "sgasik_vpc1" {
   cidr_block = "10.0.0.0/16"
 
@@ -13,7 +13,7 @@ resource "aws_vpc" "sgasik_vpc1" {
   }
 }
 
-# Create Subnet
+#Create Subnet
 resource "aws_subnet" "sgasik_subnet1" {
   depends_on = [aws_vpc.sgasik_vpc1]
   vpc_id = "${aws_vpc.sgasik_vpc1.id}"
@@ -24,8 +24,7 @@ resource "aws_subnet" "sgasik_subnet1" {
   }
 }
 
-# Create EC2
-
+#Create EC2
 resource "aws_instance" "sgasik_ec2_1" {
   depends_on = [aws_vpc.sgasik_vpc1]
   ami = "ami-0e01ce4ee18447327"
@@ -35,4 +34,15 @@ resource "aws_instance" "sgasik_ec2_1" {
   tags = {
     Name = "SGasik_EC2_1"
   }
+}
+
+#Create S3 bucket
+resource "aws_s3_bucket" "sgasik_s3bucket1" {
+bucket = "sgasik-tf-test-bucket"
+acl    = "private"
+
+#tags = {
+#  Name        = "SGasik bucket1"
+#  Environment = "Dev"
+#  }
 }
