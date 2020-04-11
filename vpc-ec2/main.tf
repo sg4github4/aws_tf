@@ -37,12 +37,32 @@ resource "aws_instance" "sgasik_ec2_1" {
 }
 
 #Create S3 bucket
-resource "aws_s3_bucket" "sgasik_s3bucket1" {
-bucket = "sgasik-tf-test-bucket"
+resource "aws_s3_bucket" "sgasiks3bucket1" {
+bucket = "sgasiks3bucket1"
 acl    = "private"
+}
 
-#tags = {
-#  Name        = "SGasik bucket1"
-#  Environment = "Dev"
-#  }
+#Create Athena Database
+resource "aws_athena_database" "sgasiks3bucket1" {
+  name = "sgasik_athenadb"
+  bucket = "${aws_s3_bucket.sgasiks3bucket1.bucket}"
+}
+
+#Create Athena Work Group
+resource "aws_athena_workgroup" "sgasik_AthenaWG1" {
+  name = "sgasik_AthenaWG1"
+
+  configuration {
+    enforce_workgroup_configuration    = true
+    publish_cloudwatch_metrics_enabled = true
+
+    result_configuration {
+      output_location = "s3://{aws_s3_bucket.sgasik_AthenaWG1.bucket}/output/"
+
+      #encryption_configuration {
+      #  encryption_option = "SSE_KMS"
+      #  kms_key_arn       = "${aws_kms_key.sgasik_AthenaWG1.arn}"
+      #}
+    }
+  }
 }
