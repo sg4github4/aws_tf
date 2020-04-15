@@ -27,7 +27,7 @@ resource "aws_subnet" "sgasik_subnet1" {
 #Create EC2
 resource "aws_instance" "sgasik_ec2_1" {
   depends_on = [aws_vpc.sgasik_vpc1]
-  ami = "ami-0e01ce4ee18447327"
+  ami = "ami-0323c3dd2da7fb37d"
   instance_type = "t2.nano"
   subnet_id = "${aws_subnet.sgasik_subnet1.id}"
 
@@ -38,12 +38,14 @@ resource "aws_instance" "sgasik_ec2_1" {
 
 #Create S3 bucket
 resource "aws_s3_bucket" "sgasiks3bucket1" {
-bucket = "sgasiks3bucket1"
-acl    = "private"
+  depends_on = [aws_vpc.sgasik_vpc1]
+  bucket = "sgasiks3bucket1"
+  acl    = "private"
 }
 
 #Create S3 bucket Policy
 resource "aws_s3_bucket_policy" "sgasiks3bucket1" {
+  depends_on = [aws_vpc.sgasik_vpc1]
   bucket = "${aws_s3_bucket.sgasiks3bucket1.id}"
 
   policy = <<POLICY
@@ -76,6 +78,7 @@ resource "aws_s3_bucket_policy" "sgasiks3bucket1" {
 
 #Create CUR (Cost and Usage Report)
 resource "aws_cur_report_definition" "sgasik_cur_report_definition" {
+  depends_on = [aws_vpc.sgasik_vpc1]
   report_name                = "sgasik-cur-report-definition"
   time_unit                  = "HOURLY"
   format                     = "textORcsv"
@@ -89,12 +92,14 @@ resource "aws_cur_report_definition" "sgasik_cur_report_definition" {
 
 #Create Athena Database
 resource "aws_athena_database" "sgasiks3bucket1" {
+  depends_on = [aws_vpc.sgasik_vpc1]
   name = "sgasik_athenadb"
   bucket = "${aws_s3_bucket.sgasiks3bucket1.bucket}"
 }
 
 #Create Athena Work Group
 resource "aws_athena_workgroup" "sgasik_AthenaWG1" {
+  depends_on = [aws_vpc.sgasik_vpc1]
   name = "sgasik_AthenaWG1"
 
   configuration {
